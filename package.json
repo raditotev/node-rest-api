@@ -1,0 +1,12 @@
+{
+  "name": "node-rest-api",
+  "version": "1.0.0",
+  "description": "Exercise project. Learn how to build RESTful API using Node and Express",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Radi Totev",
+  "license": "MIT"
+}
