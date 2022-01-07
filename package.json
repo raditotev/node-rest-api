@@ -8,5 +8,8 @@
   },
   "keywords": [],
   "author": "Radi Totev",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
 }
