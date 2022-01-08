@@ -4,12 +4,17 @@
   "description": "Exercise project. Learn how to build RESTful API using Node and Express",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "Radi Totev",
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
