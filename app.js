@@ -2,12 +2,15 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const createError = require('http-errors');
+const bodyParser = require('body-parser');
 
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 
 // Middleware
 app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Routes
 app.use('/products', productRoutes);

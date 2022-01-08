@@ -12,6 +12,7 @@
   "author": "Radi Totev",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.19.1",
     "express": "^4.17.2",
     "http-errors": "^2.0.0",
     "morgan": "^1.10.0"
