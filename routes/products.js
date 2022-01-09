@@ -1,17 +1,34 @@
 const express = require('express');
+const createError = require('http-errors');
+
+const Product = require('../models/product');
+
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-  res.status(200).json({ message: 'Get all products' });
+router.get('/', async (req, res, next) => {
+  try {
+    const products = await Product.find();
+    res.status(200).json({ message: 'Get all products', products });
+  } catch (error) {
+    console.log(error);
+    next(createError(502, error.message));
+  }
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
   const { name, price } = req.body;
-  const product = {
+  const product = new Product({
     name,
     price,
-  };
-  res.status(201).json({ message: 'Created a new product', product });
+  });
+
+  try {
+    await product.save();
+    res.status(201).json({ message: 'Created a new product', product });
+  } catch (error) {
+    console.log(error);
+    next(createError(502, error.message));
+  }
 });
 
 router.get('/:productId', (req, res, next) => {
