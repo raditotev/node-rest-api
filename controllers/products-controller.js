@@ -4,8 +4,11 @@ const Product = require('../models/product');
 
 const getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
-    res.status(200).json({ message: 'Get all products', products });
+    const products = await Product.find().select('_id name price');
+    res.status(200).json({
+      message: 'Get all products',
+      products: products,
+    });
   } catch (error) {
     console.log(error);
     next(createError(502, error.message));
@@ -21,7 +24,10 @@ const createProduct = async (req, res, next) => {
 
   try {
     await product.save();
-    res.status(201).json({ message: 'Created a new product', product });
+    res.status(201).json({
+      message: 'Created a new product',
+      product: { _id: product.id, name, price },
+    });
   } catch (error) {
     console.log(error);
     next(createError(502, error.message));
@@ -31,7 +37,7 @@ const createProduct = async (req, res, next) => {
 const getProduct = async (req, res, next) => {
   const id = req.params.productId;
   try {
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).select('_id name price');
     if (!product) {
       return next(createError(422, 'This product ID does not exists'));
     }
@@ -57,9 +63,10 @@ const updateProduct = async (req, res, next) => {
     product.price = price ? price : product.price;
 
     await product.save();
-    res
-      .status(200)
-      .json({ message: `Update product with an ID of ${id}`, product });
+    res.status(200).json({
+      message: `Update product with an ID of ${id}`,
+      product: { id, name, price },
+    });
   } catch (error) {
     console.log(error);
     return next(createError(502, error.message));
@@ -76,7 +83,7 @@ const deleteProduct = async (req, res, next) => {
     }
 
     await product.remove();
-    res.status(200).json({ message: `Delete product with an ID of ${id}` });
+    res.status(200).json({ message: 'Product deleted' });
   } catch (error) {
     console.log(error);
     return next(createError(502, error.message));
