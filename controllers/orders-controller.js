@@ -1,6 +1,7 @@
 const createError = require('http-errors');
 
 const Order = require('../models/order');
+const Product = require('../models/product');
 
 const getOrders = async (req, res, next) => {
   try {
@@ -17,6 +18,11 @@ const createOrder = async (req, res, next) => {
   const order = new Order({ pid, quantity });
 
   try {
+    const product = await Product.findById(pid);
+    if (!product) {
+      return next(createError(422, 'No product found'));
+    }
+
     await order.save();
     res.status(201).json({ message: 'Created new order', order });
   } catch (error) {
