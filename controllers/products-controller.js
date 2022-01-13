@@ -1,5 +1,8 @@
+const fs = require('fs/promises');
 const createError = require('http-errors');
+const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 
+const storage = require('../firestore');
 const Product = require('../models/product');
 
 const getProducts = async (req, res, next) => {
@@ -17,16 +20,31 @@ const getProducts = async (req, res, next) => {
 
 const createProduct = async (req, res, next) => {
   const { name, price } = req.body;
+
+  let imageURL;
+  if (req.file) {
+    try {
+      const file = await fs.readFile(req.file.path);
+      const imageRef = ref(storage, 'products/' + req.file.filename);
+      const snapshot = await uploadBytes(imageRef, file);
+      imageURL = await getDownloadURL(snapshot.ref);
+      fs.unlink(req.file.path);
+    } catch (error) {
+      return next(createError(502, error.message));
+    }
+  }
+
   const product = new Product({
     name,
     price,
+    ...(imageURL && { image: imageURL }),
   });
 
   try {
     await product.save();
     res.status(201).json({
       message: 'Created a new product',
-      product: { _id: product.id, name, price },
+      product: { _id: product.id, name, price, imageURL: product.image },
     });
   } catch (error) {
     console.log(error);
