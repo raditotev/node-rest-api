@@ -47,7 +47,7 @@ const {
 
 const validateProductInput = [
   check('name', 'Please provide product name').notEmpty(),
-  check('price', 'Please provide product price').isInt({ min: 1 }),
+  check('price', 'Please provide product price').isFloat({ min: 0.01 }),
 ];
 
 router.get('/', getProducts);
