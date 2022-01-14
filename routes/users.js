@@ -1,7 +1,11 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 
-const { createUser, deleteUser } = require('../controllers/users-controller');
+const {
+  createUser,
+  authenticateUser,
+  deleteUser,
+} = require('../controllers/users-controller');
 
 const router = Router();
 
@@ -13,6 +17,8 @@ const validateInput = [
 ];
 
 router.post('/signup', validateInput, createUser);
+
+router.post('/login', validateInput, authenticateUser);
 
 router.delete('/:uid', check('uid').isMongoId(), deleteUser);
 

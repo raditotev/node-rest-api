@@ -37,6 +37,32 @@ const createUser = async (req, res, next) => {
   }
 };
 
+const authenticateUser = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(createError(401, 'Invalid credentials'));
+    }
+
+    const isValid = bcrypt.compareSync(password, user.password);
+    if (!isValid) {
+      return next(createError(401, 'Invalid credentials'));
+    }
+
+    res.status(200).json({ message: 'Successful login' });
+  } catch (error) {
+    console.log(error);
+    next(createError(502, error.message));
+  }
+};
+
 const deleteUser = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -63,5 +89,6 @@ const deleteUser = async (req, res, next) => {
 
 module.exports = {
   createUser,
+  authenticateUser,
   deleteUser,
 };
