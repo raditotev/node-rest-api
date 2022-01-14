@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
 const { validationResult } = require('express-validator');
 
@@ -56,7 +57,11 @@ const authenticateUser = async (req, res, next) => {
       return next(createError(401, 'Invalid credentials'));
     }
 
-    res.status(200).json({ message: 'Successful login' });
+    const payload = { userId: user._id, email };
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+
+    res.status(200).json({ message: 'Successful login', token });
   } catch (error) {
     console.log(error);
     next(createError(502, error.message));
