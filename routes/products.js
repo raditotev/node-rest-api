@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const { check } = require('express-validator');
+const createError = require('http-errors');
 
 const router = express.Router();
 
@@ -23,7 +24,8 @@ const fileFilter = (req, file, cb) => {
     cb(null, true);
   } else {
     cb(
-      new Error(
+      createError(
+        415,
         'Unsupported file type. Supported types: jpeg, jpg, gif and png'
       )
     );
