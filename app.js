@@ -4,11 +4,12 @@ const createError = require('http-errors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const app = express();
-
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 const userRoutes = require('./routes/users');
+const authenticate = require('./middleware/authenticate');
+
+const app = express();
 
 // Middleware
 app.use(morgan('dev'));
@@ -29,7 +30,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/products', productRoutes);
-app.use('/orders', orderRoutes);
+app.use('/orders', authenticate, orderRoutes);
 app.use('/users', userRoutes);
 
 // Non existing routes

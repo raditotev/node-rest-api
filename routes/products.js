@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const { check } = require('express-validator');
 const createError = require('http-errors');
+const authenticate = require('../middleware/authenticate');
 
 const router = express.Router();
 
@@ -51,12 +52,28 @@ const validateProductInput = [
 
 router.get('/', getProducts);
 
-router.post('/', validateProductInput, upload.single('image'), createProduct);
+router.post(
+  '/',
+  authenticate,
+  upload.single('image'),
+  validateProductInput,
+  createProduct
+);
 
 router.get('/:productId', check('productId').isMongoId(), getProduct);
 
-router.patch('/:productId', check('productId').isMongoId(), updateProduct);
+router.patch(
+  '/:productId',
+  authenticate,
+  check('productId').isMongoId(),
+  updateProduct
+);
 
-router.delete('/:productId', check('productId').isMongoId(), deleteProduct);
+router.delete(
+  '/:productId',
+  authenticate,
+  check('productId').isMongoId(),
+  deleteProduct
+);
 
 module.exports = router;
