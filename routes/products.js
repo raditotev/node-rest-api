@@ -34,38 +34,27 @@ const limits = {
 };
 const upload = multer({ storage, fileFilter, limits });
 
-const productsController = require('../controllers/products-controller');
+const {
+  getProducts,
+  createProduct,
+  getProduct,
+  updateProduct,
+  deleteProduct,
+} = require('../controllers/products-controller');
 
 const validateProductInput = [
   check('name', 'Please provide product name').notEmpty(),
   check('price', 'Please provide product price').isInt({ min: 1 }),
 ];
 
-router.get('/', productsController.getProducts);
+router.get('/', getProducts);
 
-router.post(
-  '/',
-  validateProductInput,
-  upload.single('image'),
-  productsController.createProduct
-);
+router.post('/', validateProductInput, upload.single('image'), createProduct);
 
-router.get(
-  '/:productId',
-  check('productId').isMongoId(),
-  productsController.getProduct
-);
+router.get('/:productId', check('productId').isMongoId(), getProduct);
 
-router.patch(
-  '/:productId',
-  check('productId').isMongoId(),
-  productsController.updateProduct
-);
+router.patch('/:productId', check('productId').isMongoId(), updateProduct);
 
-router.delete(
-  '/:productId',
-  check('productId').isMongoId(),
-  productsController.deleteProduct
-);
+router.delete('/:productId', check('productId').isMongoId(), deleteProduct);
 
 module.exports = router;
