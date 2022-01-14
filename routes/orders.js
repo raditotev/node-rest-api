@@ -1,11 +1,16 @@
 const express = require('express');
 const { check } = require('express-validator');
 
-const ordersController = require('../controllers/orders-controller');
+const {
+  getOrders,
+  createOrder,
+  getOrder,
+  deleteOrder,
+} = require('../controllers/orders-controller');
 
 const router = express.Router();
 
-router.get('/', ordersController.getOrders);
+router.get('/', getOrders);
 
 router.post(
   '/',
@@ -13,19 +18,11 @@ router.post(
     check('pid', 'Invalid product ID').isMongoId(),
     check('quantity', 'Please provide quantity value').isInt({ min: 1 }),
   ],
-  ordersController.createOrder
+  createOrder
 );
 
-router.get(
-  '/:orderId',
-  check('orderId').isMongoId(),
-  ordersController.getOrder
-);
+router.get('/:orderId', check('orderId').isMongoId(), getOrder);
 
-router.delete(
-  '/:orderId',
-  check('orderId').isMongoId(),
-  ordersController.deleteOrder
-);
+router.delete('/:orderId', check('orderId').isMongoId(), deleteOrder);
 
 module.exports = router;
