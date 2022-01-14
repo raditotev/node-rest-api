@@ -2,10 +2,23 @@ const bcrypt = require('bcryptjs');
 const createError = require('http-errors');
 const { Router } = require('express');
 const User = require('../models/user');
+const { check, validationResult } = require('express-validator');
 
 const router = Router();
 
-router.post('/signup', async (req, res, next) => {
+const validateInput = [
+  check('email', 'Please enter valid email').normalizeEmail().isEmail(),
+  check('password', 'Password should be at least 6 characters long ').isLength({
+    min: 6,
+  }),
+];
+
+router.post('/signup', validateInput, async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const { email, password } = req.body;
 
   try {
@@ -33,7 +46,14 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
-router.delete('/:uid', async (req, res, next) => {
+router.delete('/:uid', check('uid').isMongoId(), async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      createError(400, 'Provide user ID as a parameter: users/{user-id}')
+    );
+  }
+
   const id = req.params.uid;
 
   try {

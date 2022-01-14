@@ -1,6 +1,7 @@
 const fs = require('fs/promises');
 const createError = require('http-errors');
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
+const { validationResult } = require('express-validator');
 
 const storage = require('../firestore');
 const Product = require('../models/product');
@@ -19,6 +20,11 @@ const getProducts = async (req, res, next) => {
 };
 
 const createProduct = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const { name, price } = req.body;
 
   let imageURL;
@@ -53,6 +59,11 @@ const createProduct = async (req, res, next) => {
 };
 
 const getProduct = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(createError(400, 'Invalid product ID'));
+  }
+
   const id = req.params.productId;
   try {
     const product = await Product.findById(id).select('_id name price');
@@ -67,6 +78,11 @@ const getProduct = async (req, res, next) => {
 };
 
 const updateProduct = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(createError(400, 'Invalid product ID'));
+  }
+
   const id = req.params.productId;
   const { name, price } = req.body;
 
@@ -92,6 +108,11 @@ const updateProduct = async (req, res, next) => {
 };
 
 const deleteProduct = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(createError(400, 'Invalid product ID'));
+  }
+
   const id = req.params.productId;
 
   try {

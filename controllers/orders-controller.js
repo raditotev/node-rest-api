@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+const { validationResult } = require('express-validator');
 
 const Order = require('../models/order');
 const Product = require('../models/product');
@@ -14,6 +15,11 @@ const getOrders = async (req, res, next) => {
 };
 
 const createOrder = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const { pid, quantity } = req.body;
   const order = new Order({ pid, quantity });
 
@@ -32,6 +38,11 @@ const createOrder = async (req, res, next) => {
 };
 
 const getOrder = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(createError(400, 'Invalid order ID'));
+  }
+
   const { orderId } = req.params;
 
   try {
@@ -47,6 +58,11 @@ const getOrder = async (req, res, next) => {
 };
 
 const deleteOrder = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(createError(400, 'Invalid order ID'));
+  }
+
   const { orderId } = req.params;
 
   try {
