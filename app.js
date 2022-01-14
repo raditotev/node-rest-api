@@ -8,6 +8,7 @@ const app = express();
 
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
+const userRoutes = require('./routes/users');
 
 // Middleware
 app.use(morgan('dev'));
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
+app.use('/users', userRoutes);
 
 // Non existing routes
 app.use((req, res, next) => {
