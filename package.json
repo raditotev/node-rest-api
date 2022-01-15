@@ -4,7 +4,7 @@
   "description": "Exercise project. Learn how to build RESTful API using Node and Express",
   "main": "app.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --watch",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "jest": "^27.4.7",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.1"
   }
 }
