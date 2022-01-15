@@ -1,3 +1,4 @@
 nodemon.json
 .DS_Store
 /tmp
+/coverage
