@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --watch",
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "Radi Totev",

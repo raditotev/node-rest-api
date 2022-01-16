@@ -2,7 +2,6 @@ const express = require('express');
 const morgan = require('morgan');
 const createError = require('http-errors');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
@@ -45,15 +44,4 @@ app.use((error, req, res, next) => {
     .json({ message: error.message || 'Server error' });
 });
 
-const { DB_USER, DB_PASSWORD, DB_NAME, PORT } = process.env;
-
-mongoose
-  .connect(
-    `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.zaczj.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`
-  )
-  .then(() => {
-    app.listen(PORT || 3000);
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+module.exports = app;
