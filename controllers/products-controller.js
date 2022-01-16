@@ -50,7 +50,7 @@ const createProduct = async (req, res, next) => {
     await product.save();
     res.status(201).json({
       message: 'Created a new product',
-      product: { _id: product.id, name, price, imageURL: product.image },
+      product: { _id: product.id, name, price: +price, imageURL },
     });
   } catch (error) {
     console.log(error);
@@ -99,7 +99,7 @@ const updateProduct = async (req, res, next) => {
     await product.save();
     res.status(200).json({
       message: `Update product with an ID of ${id}`,
-      product: { id, name, price },
+      product: { id: product.id, name, price },
     });
   } catch (error) {
     console.log(error);
