@@ -160,7 +160,7 @@ const updateProduct = async (req, res, next) => {
     await product.save();
     res.status(200).json({
       message: `Update product with an ID of ${id}`,
-      product: { id: product.id, name, price, image: product.image },
+      product: { id: product.id, name, price: +price, image: product.image },
     });
   } catch (error) {
     console.log(error);
