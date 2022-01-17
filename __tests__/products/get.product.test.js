@@ -15,7 +15,7 @@ describe('GET /product/:id', () => {
     expect.assertions(4);
 
     Product.findById.mockReturnValueOnce({
-      select: async () => Promise.resolve(mockProduct),
+      select: () => Promise.resolve(mockProduct),
     });
 
     const response = await request(app).get(`/products/${mockProduct._id}`);
@@ -31,7 +31,8 @@ describe('GET /product/:id', () => {
   test('invalid params', async () => {
     expect.assertions(3);
 
-    const response = await request(app).get('/products/invalid-param');
+    const invalidParams = 'invalid-param';
+    const response = await request(app).get('/products/' + invalidParams);
 
     expect(Product.findById).toHaveBeenCalledTimes(0);
     expect(response.statusCode).toBe(400);
@@ -41,7 +42,7 @@ describe('GET /product/:id', () => {
     expect.assertions(2);
 
     Product.findById.mockReturnValueOnce({
-      select: async () => Promise.resolve(null),
+      select: () => Promise.resolve(null),
     });
 
     const response = await request(app).get(`/products/${mockProduct._id}`);
@@ -54,7 +55,7 @@ describe('GET /product/:id', () => {
 
     const mockError = new Error('Failed');
     Product.findById.mockReturnValueOnce({
-      select: async () => Promise.reject(mockError),
+      select: () => Promise.reject(mockError),
     });
 
     const response = await request(app).get(`/products/${mockProduct._id}`);
