@@ -9,22 +9,28 @@ jest.mock('../../models/product', () => {
   return function () {
     return {
       remove: mockRemove,
+      image: 'mock/firebase/url/products/1642428867872-test.png',
     };
+  };
+});
+
+const mockDeleteObject = jest.fn();
+jest.mock('../../firestore', () => jest.fn());
+jest.mock('firebase/storage', () => {
+  return {
+    ref: jest.fn(),
+    deleteObject: () => mockDeleteObject(),
   };
 });
 
 const token = generateToken();
 const mockProductId = '61e05744a2f380b559cf40a7';
-const product = {
-  name: 'Apples',
-  price: 1.29,
-};
 
 describe('DELETE /products/:id', () => {
   test('delete file', async () => {
-    expect.assertions(3);
+    expect.assertions(4);
 
-    Product.findById.mockResolvedValueOnce(new Product(product));
+    Product.findById.mockResolvedValueOnce(new Product());
 
     const response = await request(app)
       .delete(`/products/${mockProductId}`)
@@ -33,6 +39,7 @@ describe('DELETE /products/:id', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body.message).toMatchInlineSnapshot(`"Product deleted"`);
     expect(mockRemove).toHaveBeenCalledTimes(1);
+    expect(mockDeleteObject).toHaveBeenCalledTimes(1);
   });
 
   test('unauthenticated request', async () => {
@@ -79,12 +86,25 @@ describe('DELETE /products/:id', () => {
     expect(mockRemove).toHaveBeenCalledTimes(0);
   });
 
-  test('failure to delete file', async () => {
+  test('failure to delete product', async () => {
     expect.assertions(2);
 
-    Product.findById.mockResolvedValueOnce(new Product(product));
+    Product.findById.mockResolvedValueOnce(new Product());
     const mockError = new Error('Mock error');
     mockRemove.mockRejectedValueOnce(mockError);
+
+    const response = await request(app)
+      .delete(`/products/${mockProductId}`)
+      .set('Authorization', 'Bearer ' + token);
+
+    expect(response.statusCode).toBe(502);
+    expect(response.body.message).toBe(mockError.message);
+  });
+
+  test('failure to delete product image', async () => {
+    Product.findById.mockResolvedValueOnce(new Product());
+    const mockError = new Error('Mock error');
+    mockDeleteObject.mockRejectedValueOnce(mockError);
 
     const response = await request(app)
       .delete(`/products/${mockProductId}`)
