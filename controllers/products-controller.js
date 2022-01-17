@@ -1,6 +1,11 @@
 const fs = require('fs/promises');
 const createError = require('http-errors');
-const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
+const {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} = require('firebase/storage');
 const { validationResult } = require('express-validator');
 
 const storage = require('../firestore');
@@ -150,6 +155,13 @@ const deleteProduct = async (req, res, next) => {
     const product = await Product.findById(id);
     if (!product) {
       return next(createError(422, 'This product ID does not exists'));
+    }
+
+    if (product.image) {
+      const filename = product.image.match(/\d{13}-\w+.(png|gif|jpeg|fpg)/)[0];
+
+      const imageRef = ref(storage, `products/${filename}`);
+      await deleteObject(imageRef);
     }
 
     await product.remove();
