@@ -65,6 +65,7 @@ router.get('/:productId', check('productId').isMongoId(), getProduct);
 router.patch(
   '/:productId',
   authenticate,
+  upload.single('image'),
   check('productId').isMongoId(),
   updateProduct
 );

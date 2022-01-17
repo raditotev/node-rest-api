@@ -129,13 +129,38 @@ const updateProduct = async (req, res, next) => {
       return next(createError(422, 'This product ID does not exists'));
     }
 
+    let imageURL;
+    if (req.file) {
+      if (product.image) {
+        const filename = product.image.match(
+          /\d{13}-\w+.(png|gif|jpeg|fpg)/
+        )[0];
+
+        const existingImageRef = ref(storage, `products/${filename}`);
+        await deleteObject(existingImageRef);
+      }
+
+      const file = await fs.readFile(req.file.path);
+      const imageRef = ref(storage, 'products/' + req.file.filename);
+      const snapshot = await uploadBytes(imageRef, file);
+      imageURL = await getDownloadURL(snapshot.ref);
+
+      try {
+        await fs.unlink(req.file.path);
+      } catch (error) {
+        // Deleting file from disk is not important as long it's updated to storage
+        console.log(error);
+      }
+    }
+
     product.name = name ? name : product.name;
     product.price = price ? price : product.price;
+    product.image = imageURL ? imageURL : product.image;
 
     await product.save();
     res.status(200).json({
       message: `Update product with an ID of ${id}`,
-      product: { id: product.id, name, price },
+      product: { id: product.id, name, price, image: product.image },
     });
   } catch (error) {
     console.log(error);
