@@ -1,5 +1,7 @@
 const request = require('supertest');
 const app = require('../../app');
+const fs = require('fs/promises');
+const { uploadBytes, getDownloadURL } = require('firebase/storage');
 const generateToken = require('../helpers/jwt-token');
 const Product = require('../../models/product');
 
@@ -13,15 +15,29 @@ jest.mock('../../models/product', () => {
   };
 });
 
+jest.mock('../../firestore', () => jest.fn());
+jest.mock('firebase/storage', () => {
+  return {
+    ref: jest.fn(),
+    uploadBytes: jest.fn(),
+    getDownloadURL: jest.fn(),
+    deleteObject: jest.fn(),
+  };
+});
+
+fs.readFile = jest.fn();
+
 const token = generateToken();
 const mockProductId = '61e05744a2f380b559cf40a7';
 const existingProduct = {
   name: 'Apples',
   price: 1.29,
+  image: 'https://mock/url/to/image/',
 };
 const updatedProduct = {
   name: 'Pears',
   price: 1.89,
+  image: 'mock/firebase/url/products/test-screen.png',
 };
 
 describe('PATCH /products/:id', () => {
@@ -30,10 +46,15 @@ describe('PATCH /products/:id', () => {
 
     Product.findById.mockResolvedValueOnce(new Product(existingProduct));
 
+    uploadBytes.mockResolvedValueOnce({ ref: '' });
+    getDownloadURL.mockResolvedValueOnce(updatedProduct.image);
+
     const response = await request(app)
       .patch(`/products/${mockProductId}`)
       .set('Authorization', 'Bearer ' + token)
-      .send(updatedProduct);
+      .field('name', updatedProduct.name)
+      .field('price', updatedProduct.price)
+      .attach('image', '__tests__/fixures/test-screen.png');
 
     expect(response.statusCode).toBe(200);
     expect(response.body.product).toEqual(updatedProduct);
