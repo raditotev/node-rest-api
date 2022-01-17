@@ -36,8 +36,8 @@ describe('POST /products', () => {
   test('create product', async () => {
     expect.assertions(5);
 
-    uploadBytes.mockReturnValueOnce(Promise.resolve({ ref: '' }));
-    getDownloadURL.mockReturnValueOnce(Promise.resolve(product.imageURL));
+    uploadBytes.mockResolvedValueOnce({ ref: '' });
+    getDownloadURL.mockResolvedValueOnce(product.imageURL);
 
     const response = await request(app)
       .post('/products')
@@ -53,11 +53,14 @@ describe('POST /products', () => {
     );
     expect(response.body.product).toEqual(product);
 
-    await expect(
-      fs.stat('tmp/avatar.png')
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"ENOENT: no such file or directory, stat 'tmp/avatar.png'"`
-    );
+    const files = await fs.readdir('tmp/');
+    try {
+      expect(files).toHaveLength(0);
+    } catch (error) {
+      throw new Error(
+        'Image file should be removed from disk after it has been uploaded'
+      );
+    }
   });
 
   test('unauthenticated request', async () => {
