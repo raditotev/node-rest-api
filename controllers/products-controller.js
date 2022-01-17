@@ -34,9 +34,27 @@ const createProduct = async (req, res, next) => {
       const imageRef = ref(storage, 'products/' + req.file.filename);
       const snapshot = await uploadBytes(imageRef, file);
       imageURL = await getDownloadURL(snapshot.ref);
-      fs.unlink(req.file.path);
     } catch (error) {
+      try {
+        await fs.unlink(req.file.path);
+      } catch (err) {
+        return next(
+          createError(
+            502,
+            'Failed to upload file with error:\n' +
+              error.message +
+              '\nFailed to delete file from disk with error:\n' +
+              err.message
+          )
+        );
+      }
       return next(createError(502, error.message));
+    }
+    try {
+      await fs.unlink(req.file.path);
+    } catch (error) {
+      // Deleting file from disk is not important as long it's updated to storage
+      console.log(error);
     }
   }
 
@@ -53,7 +71,20 @@ const createProduct = async (req, res, next) => {
       product: { _id: product.id, name, price: +price, imageURL },
     });
   } catch (error) {
-    console.log(error);
+    if (req.file) {
+      try {
+        await fs.unlink(req.file.path);
+      } catch (err) {}
+      return next(
+        createError(
+          502,
+          'Failed to create product with error:\n' +
+            error.message +
+            '\nFailed ot delete uploaded file with error:\n' +
+            err.message
+        )
+      );
+    }
     next(createError(502, error.message));
   }
 };
