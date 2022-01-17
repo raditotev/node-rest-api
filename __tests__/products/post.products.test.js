@@ -44,7 +44,7 @@ describe('POST /products', () => {
       .set('Authorization', 'Bearer ' + token)
       .field('name', product.name)
       .field('price', product.price)
-      .attach('image', '__tests__/fixures/avatar.png');
+      .attach('image', '__tests__/fixures/test.jpeg');
 
     expect(mockSave).toHaveBeenCalledTimes(1);
     expect(response.statusCode).toBe(201);
@@ -122,7 +122,7 @@ describe('POST /products', () => {
       .set('Authorization', 'Bearer ' + token)
       .field('name', product.name)
       .field('price', product.price)
-      .attach('image', '__tests__/fixures/avatar.png');
+      .attach('image', '__tests__/fixures/test.jpeg');
 
     expect(response.statusCode).toBe(502);
     expect(response.body.message).toBe(mockError.message);
