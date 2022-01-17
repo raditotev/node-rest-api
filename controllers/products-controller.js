@@ -146,9 +146,9 @@ const updateProduct = async (req, res, next) => {
       imageURL = await getDownloadURL(snapshot.ref);
 
       try {
-        await fs.unlink(req.file.path);
+        fs.unlink(req.file.path);
       } catch (error) {
-        // Deleting file from disk is not important as long it's updated to storage
+        // Deleting file from disk is not important as long it's uploaded to storage
         console.log(error);
       }
     }
