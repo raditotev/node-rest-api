@@ -3,15 +3,15 @@ const app = require('../../app');
 const generateToken = require('../helpers/jwt-token');
 const Product = require('../../models/product');
 
-const mockSave = jest.fn();
-// jest.mock('../../models/product', () => {
-//   return function () {
-//     return {
-//       save: jest.fn(),
-//     };
-//   };
-// });
 Product.findById = jest.fn();
+const mockSave = jest.fn();
+jest.mock('../../models/product', () => {
+  return function () {
+    return {
+      save: mockSave,
+    };
+  };
+});
 
 const token = generateToken();
 const mockProductId = '61e05744a2f380b559cf40a7';
@@ -28,12 +28,7 @@ describe('PATCH /products/:id', () => {
   test('update product', async () => {
     expect.assertions(3);
 
-    Product.findById.mockReturnValueOnce(
-      Promise.resolve({
-        ...existingProduct,
-        save: mockSave,
-      })
-    );
+    Product.findById.mockResolvedValueOnce(new Product(existingProduct));
 
     const response = await request(app)
       .patch(`/products/${mockProductId}`)
@@ -62,7 +57,7 @@ describe('PATCH /products/:id', () => {
   test('invalid params', async () => {
     expect.assertions(3);
 
-    const invalidParam = 'abc';
+    const invalidParam = 'invalid-id';
 
     const response = await request(app)
       .patch(`/products/${invalidParam}`)
@@ -77,7 +72,7 @@ describe('PATCH /products/:id', () => {
   test('invalid product id', async () => {
     expect.assertions(2);
 
-    Product.findById.mockReturnValueOnce(Promise.resolve(null));
+    Product.findById.mockResolvedValueOnce(null);
 
     const response = await request(app)
       .patch(`/products/${mockProductId}`)
@@ -93,13 +88,9 @@ describe('PATCH /products/:id', () => {
   test('failure to save updates', async () => {
     expect.assertions(2);
 
+    Product.findById.mockResolvedValueOnce(new Product(updatedProduct));
     const mockError = new Error('Mock error');
-    Product.findById.mockReturnValueOnce(
-      Promise.resolve({
-        ...updatedProduct,
-        save: mockSave.mockRejectedValue(mockError),
-      })
-    );
+    mockSave.mockRejectedValue(mockError);
 
     const response = await request(app)
       .patch(`/products/${mockProductId}`)
