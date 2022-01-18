@@ -3,11 +3,10 @@ const app = require('../../app');
 const User = require('../../models/user');
 
 const mockSave = jest.fn();
-jest.mock('../../models/user', (user = {}) => {
-  return function (user) {
+jest.mock('../../models/user', () => {
+  return function () {
     return {
       save: mockSave,
-      ...user,
     };
   };
 });
