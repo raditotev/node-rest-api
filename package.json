@@ -4,7 +4,7 @@
   "description": "Exercise project. Learn how to build RESTful API using Node and Express",
   "main": "app.js",
   "scripts": {
-    "test": "JWT_SECRET=secret jest --watch",
+    "test": "JWT_SECRET=secret jest --watchAll --silent",
     "start": "node app.js",
     "dev": "nodemon server.js"
   },
