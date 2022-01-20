@@ -1,4 +1,4 @@
 nodemon.json
 .DS_Store
-/tmp
+/tmp/**
 /coverage
