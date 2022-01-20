@@ -40,15 +40,15 @@ POST /users/login
 
 ```
 GET /products
-GET /product/:id
+GET /products/:id
 ```
 
 **Authenticated**
 
 ```
 POST /products
-PATCH /product/:id
-DELETE /product/:id
+PATCH /products/:id
+DELETE /products/:id
 
 GET /orders
 GET /orders/:id
