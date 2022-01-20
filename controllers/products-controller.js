@@ -183,7 +183,7 @@ const deleteProduct = async (req, res, next) => {
     }
 
     if (product.image) {
-      const filename = product.image.match(/\d{13}-\w+.(png|gif|jpeg|fpg)/)[0];
+      const filename = product.image.match(/\d{13}-\w+.(png|gif|jpeg|jpg)/)[0];
 
       const imageRef = ref(storage, `products/${filename}`);
       await deleteObject(imageRef);
