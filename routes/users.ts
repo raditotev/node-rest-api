@@ -1,5 +1,5 @@
-const { Router } = require('express');
-const { check } = require('express-validator');
+import { Router } from 'express';
+import { check } from 'express-validator';
 
 const {
   createUser,
@@ -22,4 +22,4 @@ router.post('/login', validateInput, authenticateUser);
 
 router.delete('/:uid', check('uid').isMongoId(), deleteUser);
 
-module.exports = router;
+export default router;

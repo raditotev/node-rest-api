@@ -1,6 +1,6 @@
-const request = require('supertest');
-const app = require('../../app');
-const Product = require('../../models/product');
+import request from 'supertest';
+import app from 'app';
+import Product from 'models/product';
 
 Product.findById = jest.fn();
 

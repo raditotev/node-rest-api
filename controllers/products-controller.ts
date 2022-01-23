@@ -1,12 +1,12 @@
-const fs = require('fs/promises');
-const createError = require('http-errors');
-const {
+import fs from 'fs';
+import createError from 'http-errors';
+import {
   ref,
   uploadBytes,
   getDownloadURL,
   deleteObject,
-} = require('firebase/storage');
-const { validationResult } = require('express-validator');
+} from 'firebase/storage';
+import { validationResult } from 'express-validator';
 
 const storage = require('../firestore');
 const Product = require('../models/product');
@@ -197,10 +197,4 @@ const deleteProduct = async (req, res, next) => {
   }
 };
 
-module.exports = {
-  getProducts,
-  createProduct,
-  getProduct,
-  updateProduct,
-  deleteProduct,
-};
+export { getProducts, createProduct, getProduct, updateProduct, deleteProduct };

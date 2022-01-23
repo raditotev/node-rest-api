@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
-module.exports = () => {
+export default () => {
   const payload = {
     userId: '61e05744a2f380b559cf40a7',
     email: 'test@example.com',

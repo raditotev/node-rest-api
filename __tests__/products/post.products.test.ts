@@ -1,8 +1,9 @@
-const fs = require('fs/promises');
-const { uploadBytes, getDownloadURL } = require('firebase/storage');
-const request = require('supertest');
-const app = require('../../app');
-const generateToken = require('../helpers/jwt-token');
+import fs from 'fs/promises';
+import { uploadBytes, getDownloadURL } from 'firebase/storage';
+
+import request from 'supertest';
+import app from 'app';
+import generateToken from '../helpers/jwt-token';
 
 jest.mock('../../firestore', () => jest.fn());
 jest.mock('firebase/storage', () => {

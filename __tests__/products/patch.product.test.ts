@@ -1,9 +1,10 @@
-const request = require('supertest');
-const app = require('../../app');
-const fs = require('fs/promises');
-const { uploadBytes, getDownloadURL } = require('firebase/storage');
-const generateToken = require('../helpers/jwt-token');
-const Product = require('../../models/product');
+import fs from 'fs/promises';
+import { uploadBytes, getDownloadURL } from 'firebase/storage';
+
+import request from 'supertest';
+import app from 'app';
+import Product from 'models/product';
+import generateToken from '../helpers/jwt-token';
 
 Product.findById = jest.fn();
 const mockSave = jest.fn();

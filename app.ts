@@ -1,12 +1,12 @@
-const express = require('express');
-const morgan = require('morgan');
-const createError = require('http-errors');
-const bodyParser = require('body-parser');
+import express from 'express';
+import morgan from 'morgan';
+import createError from 'http-errors';
+import bodyParser from 'body-parser';
 
-const productRoutes = require('./routes/products');
-const orderRoutes = require('./routes/orders');
-const userRoutes = require('./routes/users');
-const authenticate = require('./middleware/authenticate');
+import productRoutes from 'routes/products';
+import orderRoutes from 'routes/orders';
+import userRoutes from 'routes/users';
+import authenticate from 'middleware/authenticate';
 
 const app = express();
 
@@ -44,4 +44,4 @@ app.use((error, req, res, next) => {
     .json({ message: error.message || 'Server error' });
 });
 
-module.exports = app;
+export default app;

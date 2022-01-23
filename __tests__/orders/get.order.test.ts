@@ -1,7 +1,7 @@
-const request = require('supertest');
-const app = require('../../app');
-const Order = require('../../models/order');
-const generateToken = require('../helpers/jwt-token');
+import request from 'supertest';
+import app from 'app';
+import Order from 'models/order';
+import generateToken from '../helpers/jwt-token';
 
 Order.findById = jest.fn();
 

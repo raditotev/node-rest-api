@@ -1,5 +1,5 @@
-const createError = require('http-errors');
-const { validationResult } = require('express-validator');
+import createError from 'http-errors';
+import { validationResult } from 'express-validator';
 
 const Order = require('../models/order');
 const Product = require('../models/product');
@@ -79,9 +79,4 @@ const deleteOrder = async (req, res, next) => {
   }
 };
 
-module.exports = {
-  getOrders,
-  createOrder,
-  getOrder,
-  deleteOrder,
-};
+export { getOrders, createOrder, getOrder, deleteOrder };

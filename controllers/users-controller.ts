@@ -1,7 +1,7 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const createError = require('http-errors');
-const { validationResult } = require('express-validator');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import createError from 'http-errors';
+import { validationResult } from 'express-validator';
 
 const User = require('../models/user');
 
@@ -92,8 +92,4 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = {
-  createUser,
-  authenticateUser,
-  deleteUser,
-};
+export { createUser, authenticateUser, deleteUser };

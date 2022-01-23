@@ -1,9 +1,10 @@
-const fs = require('fs');
-const express = require('express');
-const multer = require('multer');
-const { check } = require('express-validator');
-const createError = require('http-errors');
-const authenticate = require('../middleware/authenticate');
+import fs from 'fs';
+import express from 'express';
+import multer from 'multer';
+import { check } from 'express-validator';
+import createError from 'http-errors';
+
+import authenticate from 'middleware/authenticate';
 
 const router = express.Router();
 
@@ -82,4 +83,4 @@ router.delete(
   deleteProduct
 );
 
-module.exports = router;
+export default router;

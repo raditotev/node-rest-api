@@ -1,6 +1,6 @@
-const request = require('supertest');
-const app = require('../../app');
-const User = require('../../models/user');
+import request from 'supertest';
+import app from 'app';
+import User from 'models/user';
 
 User.findById = jest.fn();
 const mockDelete = jest.fn();

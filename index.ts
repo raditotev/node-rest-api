@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const app = require('./app');
+import mongoose from 'mongoose';
+import app from './app';
 
 if (process.env.NODE_ENV === 'test') {
   app.listen(4567);

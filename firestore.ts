@@ -1,5 +1,5 @@
-const { initializeApp } = require('firebase/app');
-const { getStorage } = require('firebase/storage');
+import { initializeApp } from 'firebase/app';
+import { getStorage } from 'firebase/storage';
 
 const { API_KEY, AUTH_DOMAIN, PROJECT_ID, BUCKET, SENDER_ID, APP_ID } =
   process.env;
@@ -18,4 +18,4 @@ const firebaseApp = initializeApp(firebaseConfig);
 // Get a reference to the storage service, which is used to create references in your storage bucket
 const storage = getStorage(firebaseApp);
 
-module.exports = storage;
+export default storage;

@@ -1,7 +1,8 @@
-const request = require('supertest');
-const app = require('../../app');
-const User = require('../../models/user');
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
+
+import request from 'supertest';
+import app from 'app';
+import User from 'models/user';
 
 bcrypt.compareSync = jest.fn();
 User.findOne = jest.fn();

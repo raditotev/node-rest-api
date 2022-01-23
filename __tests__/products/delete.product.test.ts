@@ -1,7 +1,7 @@
-const request = require('supertest');
-const app = require('../../app');
-const Product = require('../../models/product');
-const generateToken = require('../helpers/jwt-token');
+import request from 'supertest';
+import app from 'app';
+import Product from 'models/product';
+import generateToken from '../helpers/jwt-token';
 
 Product.findById = jest.fn();
 const mockRemove = jest.fn();

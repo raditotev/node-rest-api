@@ -1,5 +1,5 @@
-const express = require('express');
-const { check } = require('express-validator');
+import express from 'express';
+import { check } from 'express-validator';
 
 const {
   getOrders,
@@ -25,4 +25,4 @@ router.get('/:orderId', check('orderId').isMongoId(), getOrder);
 
 router.delete('/:orderId', check('orderId').isMongoId(), deleteOrder);
 
-module.exports = router;
+export default router;
