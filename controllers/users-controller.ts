@@ -70,7 +70,7 @@ const authenticateUser = async (
 
     const payload = { userId: user._id, email };
     const secret = process.env.JWT_SECRET;
-    const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+    const token = jwt.sign(payload, secret!, { expiresIn: '1h' });
 
     res.status(200).json({ message: 'Successful login', token });
   } catch (error) {
