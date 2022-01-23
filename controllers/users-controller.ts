@@ -25,7 +25,8 @@ const createUser = async (
     }
   } catch (error) {
     console.log(error);
-    return next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    return next(createError(502, message));
   }
   const hash = bcrypt.hashSync(password, 10);
 
@@ -39,7 +40,8 @@ const createUser = async (
     res.status(201).json({ message: 'New user created' });
   } catch (error) {
     console.log(error);
-    next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    next(createError(502, message));
   }
 };
 
@@ -73,7 +75,8 @@ const authenticateUser = async (
     res.status(200).json({ message: 'Successful login', token });
   } catch (error) {
     console.log(error);
-    next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    next(createError(502, message));
   }
 };
 
@@ -101,7 +104,8 @@ const deleteUser = async (
     res.status(200).json({ message: 'User removed' });
   } catch (error) {
     console.log(error);
-    next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    next(createError(502, message));
   }
 };
 

@@ -25,7 +25,8 @@ const getProducts = async (
     });
   } catch (error) {
     console.log(error);
-    next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    next(createError(502, message));
   }
 };
 
@@ -49,20 +50,23 @@ const createProduct = async (
       const snapshot = await uploadBytes(imageRef, file);
       imageURL = await getDownloadURL(snapshot.ref);
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown';
       try {
         await fs.unlink(req.file.path);
       } catch (err) {
+        const unlinkErrorMessage =
+          err instanceof Error ? err.message : 'Unknown';
         return next(
           createError(
             502,
             'Failed to upload file with error:\n' +
-              error.message +
+              message +
               '\nFailed to delete file from disk with error:\n' +
-              err.message
+              unlinkErrorMessage
           )
         );
       }
-      return next(createError(502, error.message));
+      return next(createError(502, message));
     }
     try {
       await fs.unlink(req.file.path);
@@ -85,21 +89,25 @@ const createProduct = async (
       product: { _id: product.id, name, price: +price, imageURL },
     });
   } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown';
     if (req.file) {
       try {
         await fs.unlink(req.file.path);
-      } catch (err) {}
-      return next(
-        createError(
-          502,
-          'Failed to create product with error:\n' +
-            error.message +
-            '\nFailed ot delete uploaded file with error:\n' +
-            err.message
-        )
-      );
+      } catch (err) {
+        const unlinkErrorMessage =
+          err instanceof Error ? err.message : 'Unknown';
+        return next(
+          createError(
+            502,
+            'Failed to create product with error:\n' +
+              message +
+              '\nFailed ot delete uploaded file with error:\n' +
+              unlinkErrorMessage
+          )
+        );
+      }
     }
-    next(createError(502, error.message));
+    next(createError(502, message));
   }
 };
 
@@ -122,7 +130,8 @@ const getProduct = async (
     res.status(200).json({ message: `Get product with an ID ${id}`, product });
   } catch (error) {
     console.log(error);
-    next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    next(createError(502, message));
   }
 };
 
@@ -181,7 +190,8 @@ const updateProduct = async (
     });
   } catch (error) {
     console.log(error);
-    return next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    return next(createError(502, message));
   }
 };
 
@@ -214,7 +224,8 @@ const deleteProduct = async (
     res.status(200).json({ message: 'Product deleted' });
   } catch (error) {
     console.log(error);
-    return next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    return next(createError(502, message));
   }
 };
 

@@ -43,7 +43,8 @@ const createOrder = async (
     res.status(201).json({ message: 'Created new order', order });
   } catch (error) {
     console.log(error);
-    next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    next(createError(502, message));
   }
 };
 
@@ -67,7 +68,8 @@ const getOrder = async (
     res.status(200).json({ message: `GET order with id ${orderId}`, order });
   } catch (error) {
     console.log(error);
-    next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    next(createError(502, message));
   }
 };
 
@@ -93,7 +95,8 @@ const deleteOrder = async (
     res.status(200).json({ message: `DELETE order with id ${orderId}` });
   } catch (error) {
     console.log(error);
-    next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    next(createError(502, message));
   }
 };
 
