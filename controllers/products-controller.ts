@@ -45,14 +45,14 @@ const createProduct = async (
   let imageURL;
   if (req.file) {
     try {
-      const file = await fs.readFile(req.file.path);
+      const file = fs.readFileSync(req.file.path);
       const imageRef = ref(storage, 'products/' + req.file.filename);
       const snapshot = await uploadBytes(imageRef, file);
       imageURL = await getDownloadURL(snapshot.ref);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown';
       try {
-        await fs.unlink(req.file.path);
+        fs.unlinkSync(req.file.path);
       } catch (err) {
         const unlinkErrorMessage =
           err instanceof Error ? err.message : 'Unknown';
@@ -69,7 +69,7 @@ const createProduct = async (
       return next(createError(502, message));
     }
     try {
-      await fs.unlink(req.file.path);
+      fs.unlinkSync(req.file.path);
     } catch (error) {
       // Deleting file from disk is not important as long it's updated to storage
       console.log(error);
@@ -92,7 +92,7 @@ const createProduct = async (
     const message = error instanceof Error ? error.message : 'Unknown';
     if (req.file) {
       try {
-        await fs.unlink(req.file.path);
+        fs.unlinkSync(req.file.path);
       } catch (err) {
         const unlinkErrorMessage =
           err instanceof Error ? err.message : 'Unknown';
@@ -166,13 +166,14 @@ const updateProduct = async (
         await deleteObject(existingImageRef);
       }
 
-      const file = await fs.readFile(req.file.path);
+      const file = fs.readFileSync(req.file.path);
       const imageRef = ref(storage, 'products/' + req.file.filename);
       const snapshot = await uploadBytes(imageRef, file);
       imageURL = await getDownloadURL(snapshot.ref);
 
       try {
-        fs.unlink(req.file.path);
+        // No point in waiting to finish, therefore asynchronous
+        fs.unlink(req.file.path, () => {});
       } catch (error) {
         // Deleting file from disk is not important as long it's uploaded to storage
         console.log(error);
