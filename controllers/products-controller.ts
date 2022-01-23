@@ -1,4 +1,5 @@
 import fs from 'fs';
+import express from 'express';
 import createError from 'http-errors';
 import {
   ref,
@@ -11,7 +12,11 @@ import { validationResult } from 'express-validator';
 const storage = require('../firestore');
 const Product = require('../models/product');
 
-const getProducts = async (req, res, next) => {
+const getProducts = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   try {
     const products = await Product.find().select('_id name price');
     res.status(200).json({
@@ -24,7 +29,11 @@ const getProducts = async (req, res, next) => {
   }
 };
 
-const createProduct = async (req, res, next) => {
+const createProduct = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -94,7 +103,11 @@ const createProduct = async (req, res, next) => {
   }
 };
 
-const getProduct = async (req, res, next) => {
+const getProduct = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(createError(400, 'Invalid product ID'));
@@ -113,7 +126,11 @@ const getProduct = async (req, res, next) => {
   }
 };
 
-const updateProduct = async (req, res, next) => {
+const updateProduct = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(createError(400, 'Invalid product ID'));
@@ -168,7 +185,11 @@ const updateProduct = async (req, res, next) => {
   }
 };
 
-const deleteProduct = async (req, res, next) => {
+const deleteProduct = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(createError(400, 'Invalid product ID'));

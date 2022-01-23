@@ -1,11 +1,16 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import express from 'express';
 import createError from 'http-errors';
 import { validationResult } from 'express-validator';
 
 const User = require('../models/user');
 
-const createUser = async (req, res, next) => {
+const createUser = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -38,7 +43,11 @@ const createUser = async (req, res, next) => {
   }
 };
 
-const authenticateUser = async (req, res, next) => {
+const authenticateUser = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -68,7 +77,11 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
-const deleteUser = async (req, res, next) => {
+const deleteUser = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(

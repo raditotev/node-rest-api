@@ -1,20 +1,30 @@
-import createError from 'http-errors';
+import express from 'express';
+import createError, { CreateHttpError } from 'http-errors';
 import { validationResult } from 'express-validator';
 
 const Order = require('../models/order');
 const Product = require('../models/product');
 
-const getOrders = async (req, res, next) => {
+const getOrders = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   try {
     const orders = await Order.find();
     res.status(200).json({ message: 'GET all orders', orders });
   } catch (error) {
     console.log(error);
-    next(createError(502, error.message));
+    const message = error instanceof Error ? error.message : 'Unknown';
+    next(createError(502, message));
   }
 };
 
-const createOrder = async (req, res, next) => {
+const createOrder = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -37,7 +47,11 @@ const createOrder = async (req, res, next) => {
   }
 };
 
-const getOrder = async (req, res, next) => {
+const getOrder = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(createError(400, 'Invalid order ID'));
@@ -57,7 +71,11 @@ const getOrder = async (req, res, next) => {
   }
 };
 
-const deleteOrder = async (req, res, next) => {
+const deleteOrder = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(createError(400, 'Invalid order ID'));

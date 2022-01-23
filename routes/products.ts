@@ -20,7 +20,11 @@ const storage = multer.diskStorage({
     cb(null, new Date().getTime() + '-' + file.originalname);
   },
 });
-const fileFilter = (req, file, cb) => {
+const fileFilter = (
+  req: express.Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
   const mimetype = file.mimetype;
   if (
     mimetype === 'image/png' ||

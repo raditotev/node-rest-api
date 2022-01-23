@@ -1,6 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
-import createError from 'http-errors';
+import createError, { HttpError, HttpErrorConstructor } from 'http-errors';
 import bodyParser from 'body-parser';
 
 import productRoutes from 'routes/products';
@@ -33,12 +33,12 @@ app.use('/orders', authenticate, orderRoutes);
 app.use('/users', userRoutes);
 
 // Non existing routes
-app.use((req, res, next) => {
+app.use((req, res, next: express.NextFunction) => {
   const error = new createError.NotFound();
   next(error);
 });
 // Error handling
-app.use((error, req, res, next) => {
+app.use((error: HttpError, req: express.Request, res: express.Response) => {
   res
     .status(error.status || 500)
     .json({ message: error.message || 'Server error' });
