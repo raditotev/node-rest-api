@@ -4,7 +4,7 @@ import multer from 'multer';
 import { check } from 'express-validator';
 import createError from 'http-errors';
 
-import authenticate from 'middleware/authenticate';
+import authenticate from '../middleware/authenticate';
 
 const router = express.Router();
 

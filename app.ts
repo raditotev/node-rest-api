@@ -3,10 +3,10 @@ import morgan from 'morgan';
 import createError, { HttpError, HttpErrorConstructor } from 'http-errors';
 import bodyParser from 'body-parser';
 
-import productRoutes from 'routes/products';
-import orderRoutes from 'routes/orders';
-import userRoutes from 'routes/users';
-import authenticate from 'middleware/authenticate';
+import productRoutes from './routes/products';
+import orderRoutes from './routes/orders';
+import userRoutes from './routes/users';
+import authenticate from './middleware/authenticate';
 
 const app = express();
 
