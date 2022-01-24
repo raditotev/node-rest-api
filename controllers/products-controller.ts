@@ -150,12 +150,13 @@ const updateProduct = async (
     let imageURL;
     if (req.file) {
       if (product.image) {
-        const filename = product.image.match(
-          /\d{13}-\w+.(png|gif|jpeg|fpg)/
-        )[0];
+        const match = product.image.match(/\d{13}-\w+.(png|gif|jpeg|fpg)/);
+        const filename = match ? match[0] : null;
 
-        const existingImageRef = ref(storage, `products/${filename}`);
-        await deleteObject(existingImageRef);
+        if (filename) {
+          const existingImageRef = ref(storage, `products/${filename}`);
+          await deleteObject(existingImageRef);
+        }
       }
 
       const file = fs.readFileSync(req.file.path);
@@ -207,10 +208,13 @@ const deleteProduct = async (
     }
 
     if (product.image) {
-      const filename = product.image.match(/\d{13}-\w+.(png|gif|jpeg|jpg)/)[0];
+      const match = product.image.match(/\d{13}-\w+.(png|gif|jpeg|jpg)/);
+      const filename = match ? match[0] : null;
 
-      const imageRef = ref(storage, `products/${filename}`);
-      await deleteObject(imageRef);
+      if (filename) {
+        const imageRef = ref(storage, `products/${filename}`);
+        await deleteObject(imageRef);
+      }
     }
 
     await product.remove();
