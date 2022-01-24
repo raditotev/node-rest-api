@@ -31,6 +31,9 @@ app.use((req, res, next) => {
 app.use('/products', productRoutes);
 app.use('/orders', authenticate, orderRoutes);
 app.use('/users', userRoutes);
+app.use('/status', (req, res) => {
+  return res.status(200).send('Server up and running');
+});
 
 // Non existing routes
 app.use((req, res, next: express.NextFunction) => {
