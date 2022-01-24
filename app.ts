@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import createError, { HttpError } from 'http-errors';
 
@@ -13,7 +13,7 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header(
     'Access-Control-Allow-Headers',
@@ -30,17 +30,17 @@ app.use((req, res, next) => {
 app.use('/products', productRoutes);
 app.use('/orders', authenticate, orderRoutes);
 app.use('/users', userRoutes);
-app.use('/status', (req, res) => {
+app.use('/status', (req: Request, res: Response) => {
   return res.status(200).send('Server up and running');
 });
 
 // Non existing routes
-app.use((req, res, next: express.NextFunction) => {
+app.use((req: Request, res: Response, next: Function) => {
   const error = new createError.NotFound();
-  next(error);
+  return next(error);
 });
 // Error handling
-app.use((error: HttpError, req: express.Request, res: express.Response) => {
+app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
   res
     .status(error.status || 500)
     .json({ message: error.message || 'Server error' });
