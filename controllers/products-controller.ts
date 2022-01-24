@@ -9,8 +9,8 @@ import {
 } from 'firebase/storage';
 import { validationResult } from 'express-validator';
 
-const storage = require('../firestore');
-const Product = require('../models/product');
+import storage from '../firestore';
+import Product from '../models/product';
 
 const getProducts = async (
   req: express.Request,

@@ -4,7 +4,7 @@ import express from 'express';
 import createError from 'http-errors';
 import { validationResult } from 'express-validator';
 
-const User = require('../models/user');
+import User from '../models/user';
 
 const createUser = async (
   req: express.Request,

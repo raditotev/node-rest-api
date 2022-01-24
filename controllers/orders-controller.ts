@@ -2,8 +2,8 @@ import express from 'express';
 import createError, { CreateHttpError } from 'http-errors';
 import { validationResult } from 'express-validator';
 
-const Order = require('../models/order');
-const Product = require('../models/product');
+import Order from '../models/order';
+import Product from '../models/product';
 
 const getOrders = async (
   req: express.Request,
