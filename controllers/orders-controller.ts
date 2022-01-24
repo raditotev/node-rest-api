@@ -1,15 +1,11 @@
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import createError, { CreateHttpError } from 'http-errors';
 import { validationResult } from 'express-validator';
 
 import Order from '../models/order';
 import Product from '../models/product';
 
-const getOrders = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
+const getOrders = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const orders = await Order.find();
     res.status(200).json({ message: 'GET all orders', orders });
@@ -20,11 +16,7 @@ const getOrders = async (
   }
 };
 
-const createOrder = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
+const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -48,11 +40,7 @@ const createOrder = async (
   }
 };
 
-const getOrder = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
+const getOrder = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(createError(400, 'Invalid order ID'));
@@ -73,11 +61,7 @@ const getOrder = async (
   }
 };
 
-const deleteOrder = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
+const deleteOrder = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(createError(400, 'Invalid order ID'));

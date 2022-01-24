@@ -1,5 +1,5 @@
 import fs from 'fs';
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
 import {
   ref,
@@ -12,11 +12,7 @@ import { validationResult } from 'express-validator';
 import storage from '../firestore';
 import Product from '../models/product';
 
-const getProducts = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
+const getProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const products = await Product.find().select('_id name price');
     res.status(200).json({
@@ -31,9 +27,9 @@ const getProducts = async (
 };
 
 const createProduct = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -111,11 +107,7 @@ const createProduct = async (
   }
 };
 
-const getProduct = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
+const getProduct = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(createError(400, 'Invalid product ID'));
@@ -136,9 +128,9 @@ const getProduct = async (
 };
 
 const updateProduct = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -197,9 +189,9 @@ const updateProduct = async (
 };
 
 const deleteProduct = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
