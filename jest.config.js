@@ -23,7 +23,12 @@ module.exports = {
   coverageDirectory: 'coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: ['/node_modules/', '/coverage/', '/tmp/'],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/coverage/',
+    '/tmp/',
+    '/dist',
+  ],
 
   // Indicates which provider should be used to instrument code for coverage
   coverageProvider: 'v8',
@@ -42,8 +47,12 @@ module.exports = {
   resetMocks: true,
 
   // The glob patterns Jest uses to detect test files
-  testMatch: ['**/**/*.test.js'],
+  testMatch: ['**/**/*.test.ts'],
+  // moduleFileExtensions: ['js', 'ts'],
 
   // Indicates whether each individual test should be reported during the run
   verbose: true,
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  modulePaths: ['<rootDir>/dist'],
 };
