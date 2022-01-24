@@ -6,6 +6,6 @@ export default () => {
     email: 'test@example.com',
   };
 
-  const secret = process.env.JWT_SECRET;
+  const secret = process.env.JWT_SECRET!;
   return jwt.sign(payload, secret, { expiresIn: '1h' });
 };
