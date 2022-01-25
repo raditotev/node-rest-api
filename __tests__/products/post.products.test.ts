@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import { uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import request from 'supertest';
-import app from 'app';
+import app from '../../app';
 import generateToken from '../helpers/jwt-token';
 
 jest.mock('../../firestore', () => jest.fn());
@@ -23,7 +23,8 @@ jest.mock('../../models/product', () => {
   };
 });
 
-fs.readFile = jest.fn();
+const mockFs = fs as jest.Mocked<typeof fs>;
+mockFs.readFile = jest.fn();
 
 const token = generateToken();
 const mockError = new Error('Mock error');
@@ -37,8 +38,8 @@ describe('POST /products', () => {
   test('create product', async () => {
     expect.assertions(5);
 
-    uploadBytes.mockResolvedValueOnce({ ref: '' });
-    getDownloadURL.mockResolvedValueOnce(product.imageURL);
+    (uploadBytes as jest.Mock).mockResolvedValueOnce({ ref: '' });
+    (getDownloadURL as jest.Mock).mockResolvedValueOnce(product.imageURL);
 
     const response = await request(app)
       .post('/products')
@@ -116,7 +117,7 @@ describe('POST /products', () => {
   test('failure to upload file', async () => {
     expect.assertions(3);
 
-    fs.readFile.mockRejectedValue(mockError);
+    mockFs.readFile.mockRejectedValue(mockError);
 
     const response = await request(app)
       .post('/products')

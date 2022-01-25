@@ -1,8 +1,16 @@
 import request from 'supertest';
-import app from 'app';
-import Product from 'models/product';
+import app from '../../app';
+import Product from '../../models/product';
 
-Product.findById = jest.fn();
+jest.mock('../../models/product', () => {
+  return function (product: any) {
+    return {
+      ...product,
+    };
+  };
+});
+const mockedProduct = Product as jest.Mocked<typeof Product>;
+mockedProduct.findById = jest.fn();
 
 const mockProduct = {
   _id: '61e05744a2f380b559cf40a7',
@@ -14,13 +22,13 @@ describe('GET /product/:id', () => {
   test('fetch product successfully', async () => {
     expect.assertions(4);
 
-    Product.findById.mockReturnValueOnce({
+    mockedProduct.findById.mockReturnValueOnce({
       select: () => Promise.resolve(mockProduct),
-    });
+    } as any);
 
     const response = await request(app).get(`/products/${mockProduct._id}`);
 
-    expect(Product.findById).toHaveBeenCalledTimes(1);
+    expect(mockedProduct.findById).toHaveBeenCalledTimes(1);
     expect(response.statusCode).toBe(200);
     expect(response.body.message).toBe(
       `Get product with an ID ${mockProduct._id}`
@@ -41,9 +49,9 @@ describe('GET /product/:id', () => {
   test('missing product', async () => {
     expect.assertions(2);
 
-    Product.findById.mockReturnValueOnce({
+    mockedProduct.findById.mockReturnValueOnce({
       select: () => Promise.resolve(null),
-    });
+    } as any);
 
     const response = await request(app).get(`/products/${mockProduct._id}`);
 
@@ -54,9 +62,9 @@ describe('GET /product/:id', () => {
     expect.assertions(2);
 
     const mockError = new Error('Failed');
-    Product.findById.mockReturnValueOnce({
+    mockedProduct.findById.mockReturnValueOnce({
       select: () => Promise.reject(mockError),
-    });
+    } as any);
 
     const response = await request(app).get(`/products/${mockProduct._id}`);
 

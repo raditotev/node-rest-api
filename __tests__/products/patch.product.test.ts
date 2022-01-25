@@ -2,11 +2,12 @@ import fs from 'fs/promises';
 import { uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import request from 'supertest';
-import app from 'app';
-import Product from 'models/product';
+import app from '../../app';
+import Product from '../../models/product';
 import generateToken from '../helpers/jwt-token';
 
-Product.findById = jest.fn();
+const mockedProduct = Product as jest.Mocked<typeof Product>;
+mockedProduct.findById = jest.fn();
 const mockSave = jest.fn();
 jest.mock('../../models/product', () => {
   return function () {
@@ -45,10 +46,10 @@ describe('PATCH /products/:id', () => {
   test('update product', async () => {
     expect.assertions(3);
 
-    Product.findById.mockResolvedValueOnce(new Product(existingProduct));
+    mockedProduct.findById.mockResolvedValueOnce(new Product(existingProduct));
 
-    uploadBytes.mockResolvedValueOnce({ ref: '' });
-    getDownloadURL.mockResolvedValueOnce(updatedProduct.image);
+    (uploadBytes as jest.Mock).mockResolvedValueOnce({ ref: '' });
+    (getDownloadURL as jest.Mock).mockResolvedValueOnce(updatedProduct.image);
 
     const response = await request(app)
       .patch(`/products/${mockProductId}`)
@@ -94,7 +95,7 @@ describe('PATCH /products/:id', () => {
   test('invalid product id', async () => {
     expect.assertions(2);
 
-    Product.findById.mockResolvedValueOnce(null);
+    mockedProduct.findById.mockResolvedValueOnce(null);
 
     const response = await request(app)
       .patch(`/products/${mockProductId}`)
@@ -110,7 +111,7 @@ describe('PATCH /products/:id', () => {
   test('failure to save updates', async () => {
     expect.assertions(2);
 
-    Product.findById.mockResolvedValueOnce(new Product(updatedProduct));
+    mockedProduct.findById.mockResolvedValueOnce(new Product(updatedProduct));
     const mockError = new Error('Mock error');
     mockSave.mockRejectedValue(mockError);
 

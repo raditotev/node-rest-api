@@ -1,9 +1,10 @@
 import request from 'supertest';
-import app from 'app';
-import Product from 'models/product';
+import app from '../../app';
+import Product from '../../models/product';
 import generateToken from '../helpers/jwt-token';
 
-Product.findById = jest.fn();
+const mockedProduct = Product as jest.Mocked<typeof Product>;
+mockedProduct.findById = jest.fn();
 const mockRemove = jest.fn();
 jest.mock('../../models/product', () => {
   return function () {
@@ -30,7 +31,7 @@ describe('DELETE /products/:id', () => {
   test('delete file', async () => {
     expect.assertions(4);
 
-    Product.findById.mockResolvedValueOnce(new Product());
+    mockedProduct.findById.mockResolvedValueOnce(new Product());
 
     const response = await request(app)
       .delete(`/products/${mockProductId}`)
@@ -73,7 +74,7 @@ describe('DELETE /products/:id', () => {
   test('invalid ID', async () => {
     expect.assertions(3);
 
-    Product.findById.mockResolvedValueOnce(null);
+    mockedProduct.findById.mockResolvedValueOnce(null);
 
     const response = await request(app)
       .delete(`/products/${mockProductId}`)
@@ -89,7 +90,7 @@ describe('DELETE /products/:id', () => {
   test('failure to delete product', async () => {
     expect.assertions(2);
 
-    Product.findById.mockResolvedValueOnce(new Product());
+    mockedProduct.findById.mockResolvedValueOnce(new Product());
     const mockError = new Error('Mock error');
     mockRemove.mockRejectedValueOnce(mockError);
 
@@ -102,7 +103,7 @@ describe('DELETE /products/:id', () => {
   });
 
   test('failure to delete product image', async () => {
-    Product.findById.mockResolvedValueOnce(new Product());
+    mockedProduct.findById.mockResolvedValueOnce(new Product());
     const mockError = new Error('Mock error');
     mockDeleteObject.mockRejectedValueOnce(mockError);
 

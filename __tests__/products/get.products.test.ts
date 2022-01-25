@@ -1,8 +1,9 @@
 import request from 'supertest';
-import app from 'app';
-import Product from 'models/product';
+import app from '../../app';
+import Product from '../../models/product';
 
-Product.find = jest.fn();
+const mockedProduct = Product as jest.Mocked<typeof Product>;
+mockedProduct.find = jest.fn();
 
 describe.only('GET /products', () => {
   test('get products', async () => {
@@ -25,9 +26,9 @@ describe.only('GET /products', () => {
         price: 0.99,
       },
     ];
-    Product.find.mockReturnValueOnce({
+    mockedProduct.find.mockReturnValueOnce({
       select: () => Promise.resolve(mockProducts),
-    });
+    } as any);
 
     const response = await request(app).get('/products');
 
@@ -40,9 +41,9 @@ describe.only('GET /products', () => {
     expect.assertions(2);
 
     const mockError = new Error('Failed');
-    Product.find.mockReturnValueOnce({
+    mockedProduct.find.mockReturnValueOnce({
       select: () => Promise.reject(mockError),
-    });
+    } as any);
 
     const response = await request(app).get('/products');
 
