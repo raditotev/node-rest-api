@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 import { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
 import {
@@ -41,14 +41,15 @@ const createProduct = async (
   let imageURL;
   if (req.file) {
     try {
-      const file = fs.readFileSync(req.file.path);
+      const file: any = await fs.readFile(req.file.path);
+
       const imageRef = ref(storage, 'products/' + req.file.filename);
       const snapshot = await uploadBytes(imageRef, file);
       imageURL = await getDownloadURL(snapshot.ref);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown';
       try {
-        fs.unlinkSync(req.file.path);
+        fs.unlink(req.file.path);
       } catch (err) {
         const unlinkErrorMessage =
           err instanceof Error ? err.message : 'Unknown';
@@ -65,7 +66,7 @@ const createProduct = async (
       return next(createError(502, message));
     }
     try {
-      fs.unlinkSync(req.file.path);
+      fs.unlink(req.file.path);
     } catch (error) {
       // Deleting file from disk is not important as long it's updated to storage
       console.log(error);
@@ -88,7 +89,7 @@ const createProduct = async (
     const message = error instanceof Error ? error.message : 'Unknown';
     if (req.file) {
       try {
-        fs.unlinkSync(req.file.path);
+        fs.unlink(req.file.path);
       } catch (err) {
         const unlinkErrorMessage =
           err instanceof Error ? err.message : 'Unknown';
@@ -159,14 +160,14 @@ const updateProduct = async (
         }
       }
 
-      const file = fs.readFileSync(req.file.path);
+      const file = await fs.readFile(req.file.path);
       const imageRef = ref(storage, 'products/' + req.file.filename);
       const snapshot = await uploadBytes(imageRef, file);
       imageURL = await getDownloadURL(snapshot.ref);
 
       try {
         // No point in waiting to finish, therefore asynchronous
-        fs.unlink(req.file.path, () => {});
+        fs.unlink(req.file.path);
       } catch (error) {
         // Deleting file from disk is not important as long it's uploaded to storage
         console.log(error);
