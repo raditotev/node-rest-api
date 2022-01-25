@@ -26,7 +26,7 @@
 ## Scripts
 
 - run tests `npm test`
-- start dev server `npm run dev`
+- start dev server `npm run serve`
 - start production server `npm start`
 
 ## Endpoints
