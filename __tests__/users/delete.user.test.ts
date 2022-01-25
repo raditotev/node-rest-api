@@ -1,8 +1,9 @@
 import request from 'supertest';
-import app from 'app';
-import User from 'models/user';
+import app from '../../app';
+import User from '../../models/user';
 
-User.findById = jest.fn();
+const mockedUser = User as jest.Mocked<typeof User>;
+mockedUser.findById = jest.fn();
 const mockDelete = jest.fn();
 jest.mock('../../models/user', () => {
   return function () {
@@ -18,7 +19,7 @@ describe('DELETE /users/:id', () => {
   test('delete user', async () => {
     expect.assertions(3);
 
-    User.findById.mockResolvedValueOnce(new User());
+    mockedUser.findById.mockResolvedValueOnce(new User());
 
     const response = await request(app).delete(`/users/${mockUserId}`);
 
@@ -44,7 +45,7 @@ describe('DELETE /users/:id', () => {
   test('non-existing user', async () => {
     expect.assertions(3);
 
-    User.findById.mockResolvedValueOnce(null);
+    mockedUser.findById.mockResolvedValueOnce(null);
 
     const response = await request(app).delete(`/users/${mockUserId}`);
 

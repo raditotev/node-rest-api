@@ -1,11 +1,13 @@
 import bcrypt from 'bcryptjs';
 
 import request from 'supertest';
-import app from 'app';
-import User from 'models/user';
+import app from '../../app';
+import User from '../../models/user';
 
-bcrypt.compareSync = jest.fn();
-User.findOne = jest.fn();
+const mockedBcrypt = bcrypt as jest.Mocked<typeof bcrypt>;
+mockedBcrypt.compareSync = jest.fn();
+const mockedUser = User as jest.Mocked<typeof User>;
+mockedUser.findOne = jest.fn();
 
 const mockUser = {
   _id: '61e05744a2f380b559cf40a7',
@@ -17,8 +19,8 @@ describe('POST /users/login', () => {
   test('authenticate user', async () => {
     expect.assertions(3);
 
-    User.findOne.mockResolvedValueOnce(mockUser);
-    bcrypt.compareSync.mockReturnValue(true);
+    mockedUser.findOne.mockResolvedValueOnce(mockUser as any);
+    mockedBcrypt.compareSync.mockReturnValue(true);
 
     const response = await request(app).post('/users/login').send(mockUser);
 
@@ -48,7 +50,7 @@ describe('POST /users/login', () => {
         },
       ]
     `);
-    expect(User.findOne).toHaveBeenCalledTimes(0);
+    expect(mockedUser.findOne).toHaveBeenCalledTimes(0);
   });
 
   test('invalid email', async () => {
@@ -63,7 +65,7 @@ describe('POST /users/login', () => {
     expect(response.body.errors[0].msg).toMatchInlineSnapshot(
       `"Please enter valid email"`
     );
-    expect(User.findOne).toHaveBeenCalledTimes(0);
+    expect(mockedUser.findOne).toHaveBeenCalledTimes(0);
   });
 
   test('short password', async () => {
@@ -78,13 +80,13 @@ describe('POST /users/login', () => {
     expect(response.body.errors[0].msg).toMatchInlineSnapshot(
       `"Password should be at least 6 characters long "`
     );
-    expect(User.findOne).toHaveBeenCalledTimes(0);
+    expect(mockedUser.findOne).toHaveBeenCalledTimes(0);
   });
 
   test('wrong email', async () => {
     expect.assertions(2);
 
-    User.findOne.mockResolvedValueOnce(null);
+    mockedUser.findOne.mockResolvedValueOnce(null);
 
     const response = await request(app).post('/users/login').send(mockUser);
 
@@ -95,8 +97,8 @@ describe('POST /users/login', () => {
   });
 
   test('wrong password', async () => {
-    User.findOne.mockResolvedValueOnce(true);
-    bcrypt.compareSync.mockReturnValue(false);
+    mockedUser.findOne.mockResolvedValueOnce(true as any);
+    mockedBcrypt.compareSync.mockReturnValue(false);
 
     const response = await request(app).post('/users/login').send(mockUser);
 

@@ -1,6 +1,6 @@
 import request from 'supertest';
-import app from 'app';
-import User from 'models/user';
+import app from '../../app';
+import User from '../../models/user';
 
 const mockSave = jest.fn();
 jest.mock('../../models/user', () => {
@@ -10,7 +10,8 @@ jest.mock('../../models/user', () => {
     };
   };
 });
-User.findOne = jest.fn();
+const mockedUser = User as jest.Mocked<typeof User>;
+mockedUser.findOne = jest.fn();
 
 const mockUser = {
   email: 'test@test.com',
@@ -21,7 +22,7 @@ describe('POST /users/signup', () => {
   test('create user', async () => {
     expect.assertions(3);
 
-    User.findOne.mockResolvedValueOnce(null);
+    mockedUser.findOne.mockResolvedValueOnce(null);
 
     const response = await request(app).post('/users/signup').send(mockUser);
 
@@ -51,13 +52,13 @@ describe('POST /users/signup', () => {
         },
       ]
     `);
-    expect(User.findOne).toHaveBeenCalledTimes(0);
+    expect(mockedUser.findOne).toHaveBeenCalledTimes(0);
   });
 
   test('existing user', async () => {
     expect.assertions(3);
 
-    User.findOne.mockResolvedValueOnce(mockUser);
+    mockedUser.findOne.mockResolvedValueOnce(mockUser as any);
 
     const response = await request(app).post('/users/signup').send(mockUser);
 
@@ -71,7 +72,7 @@ describe('POST /users/signup', () => {
   test('failure to create user', async () => {
     expect.assertions(2);
 
-    User.findOne.mockResolvedValueOnce(null);
+    mockedUser.findOne.mockResolvedValueOnce(null);
     const mockError = new Error('Mock error');
     mockSave.mockRejectedValueOnce(mockError);
 
