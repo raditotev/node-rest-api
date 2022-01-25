@@ -48,11 +48,11 @@ module.exports = {
 
   // The glob patterns Jest uses to detect test files
   testMatch: ['**/**/*.test.ts'],
-  // moduleFileExtensions: ['js', 'ts'],
 
   // Indicates whether each individual test should be reported during the run
   verbose: true,
+
+  // Typescript
   preset: 'ts-jest',
   testEnvironment: 'node',
-  modulePaths: ['<rootDir>/dist'],
 };
