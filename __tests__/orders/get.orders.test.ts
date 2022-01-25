@@ -1,29 +1,43 @@
 import request from 'supertest';
-import app from 'app';
-import Order from 'models/order';
+import app from '../../app';
+import Order from '../../models/order';
 import generateToken from '../helpers/jwt-token';
 
-Order.find = jest.fn();
+type mockOrder = {
+  _id: string;
+  quantity: number;
+  pid: string;
+};
+
+const mockedOrder = Order as jest.Mocked<typeof Order>;
+mockedOrder.find = jest.fn();
+jest.mock('../../models/order', () => {
+  return function (order: mockOrder) {
+    return {
+      ...order,
+    };
+  };
+});
 
 const token = generateToken();
 const mockOrders = [
-  {
+  new Order({
     _id: '61e578eb2a382ad1ca95bf31',
     quantity: 2,
     pid: '61e188afc4d3175cc38c1811',
-  },
-  {
+  }),
+  new Order({
     _id: '61e578eb2a382ad1ca95bf33',
     quantity: 1,
     pid: '61e188afc4d3175cc38c1822',
-  },
+  }),
 ];
 
 describe('GET /orders', () => {
   test('get orders', async () => {
     expect.assertions(3);
 
-    Order.find.mockResolvedValueOnce(mockOrders);
+    mockedOrder.find.mockResolvedValueOnce(mockOrders);
 
     const response = await request(app)
       .get('/orders')
@@ -52,7 +66,7 @@ describe('GET /orders', () => {
     expect.assertions(2);
 
     const mockError = new Error('Mock error');
-    Order.find.mockRejectedValueOnce(mockError);
+    mockedOrder.find.mockRejectedValueOnce(mockError);
 
     const response = await request(app)
       .get('/orders')

@@ -1,13 +1,14 @@
 import request from 'supertest';
-import app from 'app';
-import Product from 'models/product';
+import app from '../../app';
+import Product from '../../models/product';
 import generateToken from '../helpers/jwt-token';
 
-Product.findById = jest.fn();
+const mockedProduct = Product as jest.Mocked<typeof Product>;
+mockedProduct.findById = jest.fn();
 const mockSave = jest.fn();
 const mockOrderConstructor = jest.fn();
 jest.mock('../../models/order', () => {
-  return function (order) {
+  return function (order: any) {
     return {
       constructor: mockOrderConstructor,
       ...order,
@@ -17,25 +18,29 @@ jest.mock('../../models/order', () => {
 });
 
 const token = generateToken();
-const mockOrder = {
+const fakeOrder = {
   quantity: 2,
   pid: '61e188afc4d3175cc38c1811',
 };
+const fakeProduct = new Product({
+  name: 'Test',
+  price: 9,
+});
 
 describe('POST /orders/:id', () => {
   test('create order', async () => {
     expect.assertions(3);
 
-    Product.findById.mockResolvedValueOnce(true);
+    mockedProduct.findById.mockResolvedValueOnce(fakeProduct);
 
     const response = await request(app)
       .post('/orders')
       .set('Authorization', 'Bearer ' + token)
-      .send(mockOrder);
+      .send(fakeOrder);
 
     expect(response.statusCode).toBe(201);
     expect(response.body.message).toMatchInlineSnapshot(`"Created new order"`);
-    expect(response.body.order).toEqual(mockOrder);
+    expect(response.body.order).toEqual(fakeOrder);
   });
 
   test('unauthenticated request', async () => {
@@ -46,7 +51,7 @@ describe('POST /orders/:id', () => {
     const response = await request(app)
       .post('/orders')
       .set('Authorization', 'Bearer ' + invalidToken)
-      .send(mockOrder);
+      .send(fakeOrder);
 
     expect(response.statusCode).toBe(401);
     expect(response.body.message).toMatchInlineSnapshot(`"Unauthorized"`);
@@ -62,7 +67,7 @@ describe('POST /orders/:id', () => {
       .post('/orders')
       .set('Authorization', 'Bearer ' + token)
       .send({
-        ...mockOrder,
+        ...fakeOrder,
         pid: invalidProductId,
       });
 
@@ -80,7 +85,7 @@ describe('POST /orders/:id', () => {
       .post('/orders')
       .set('Authorization', 'Bearer ' + token)
       .send({
-        ...mockOrder,
+        ...fakeOrder,
         quantity: 0,
       });
 
@@ -94,12 +99,12 @@ describe('POST /orders/:id', () => {
   test('non-existent product', async () => {
     expect.assertions(3);
 
-    Product.findById.mockResolvedValueOnce(null);
+    mockedProduct.findById.mockResolvedValueOnce(null);
 
     const response = await request(app)
       .post('/orders')
       .set('Authorization', 'Bearer ' + token)
-      .send(mockOrder);
+      .send(fakeOrder);
 
     expect(response.statusCode).toBe(422);
     expect(response.body.message).toMatchInlineSnapshot(`"No product found"`);
@@ -109,14 +114,14 @@ describe('POST /orders/:id', () => {
   test('failure to save order', async () => {
     expect.assertions(2);
 
-    Product.findById.mockResolvedValueOnce(true);
+    mockedProduct.findById.mockResolvedValueOnce(fakeProduct);
     const mockError = new Error('Mock error');
     mockSave.mockRejectedValueOnce(mockError);
 
     const response = await request(app)
       .post('/orders')
       .set('Authorization', 'Bearer ' + token)
-      .send(mockOrder);
+      .send(fakeOrder);
 
     expect(response.statusCode).toBe(502);
     expect(response.body.message).toEqual(mockError.message);

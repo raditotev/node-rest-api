@@ -1,9 +1,10 @@
 import request from 'supertest';
-import app from 'app';
-import Order from 'models/order';
+import app from '../../app';
+import Order from '../../models/order';
 import generateToken from '../helpers/jwt-token';
 
-Order.findById = jest.fn();
+const mockedOrder = Order as jest.Mocked<typeof Order>;
+mockedOrder.findById = jest.fn();
 const mockRemove = jest.fn();
 jest.mock('../../models/order', () => {
   return function () {
@@ -20,7 +21,7 @@ describe('DELETE /orders/:id', () => {
   test('delete order', async () => {
     expect.assertions(3);
 
-    Order.findById.mockResolvedValueOnce(new Order());
+    mockedOrder.findById.mockResolvedValueOnce(new Order());
 
     const response = await request(app)
       .delete(`/orders/${mockOrderId}`)
@@ -44,7 +45,7 @@ describe('DELETE /orders/:id', () => {
 
     expect(response.statusCode).toBe(401);
     expect(response.body.message).toMatchInlineSnapshot(`"Unauthorized"`);
-    expect(Order.findById).toHaveBeenCalledTimes(0);
+    expect(mockedOrder.findById).toHaveBeenCalledTimes(0);
   });
 
   test('invalid ID', async () => {
@@ -58,13 +59,13 @@ describe('DELETE /orders/:id', () => {
 
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toMatchInlineSnapshot(`"Invalid order ID"`);
-    expect(Order.findById).toHaveBeenCalledTimes(0);
+    expect(mockedOrder.findById).toHaveBeenCalledTimes(0);
   });
 
   test('non-existent order', async () => {
     expect.assertions(3);
 
-    Order.findById.mockResolvedValueOnce(null);
+    mockedOrder.findById.mockResolvedValueOnce(null);
 
     const response = await request(app)
       .delete(`/orders/${mockOrderId}`)
@@ -80,7 +81,7 @@ describe('DELETE /orders/:id', () => {
   test('failure to delete', async () => {
     expect.assertions(2);
 
-    Order.findById.mockResolvedValueOnce(new Order());
+    mockedOrder.findById.mockResolvedValueOnce(new Order());
     const mockError = new Error('Mock error');
     mockRemove.mockRejectedValueOnce(mockError);
 

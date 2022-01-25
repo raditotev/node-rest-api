@@ -1,9 +1,23 @@
 import request from 'supertest';
-import app from 'app';
-import Order from 'models/order';
+import app from '../../app';
+import Order from '../../models/order';
 import generateToken from '../helpers/jwt-token';
 
-Order.findById = jest.fn();
+const mockedOrder = Order as jest.Mocked<typeof Order>;
+mockedOrder.findById = jest.fn();
+jest.mock('../../models/order', () => {
+  return function (order: mockOrder) {
+    return {
+      ...order,
+    };
+  };
+});
+
+type mockOrder = {
+  _id: string;
+  quantity: number;
+  pid: string;
+};
 
 const token = generateToken();
 const mockOrder = {
@@ -16,7 +30,7 @@ describe('GET /order/:id', () => {
   test('get order', async () => {
     expect.assertions(3);
 
-    Order.findById.mockResolvedValueOnce(mockOrder);
+    mockedOrder.findById.mockResolvedValueOnce(new Order(mockOrder));
 
     const response = await request(app)
       .get(`/orders/${mockOrder._id}`)
@@ -59,7 +73,7 @@ describe('GET /order/:id', () => {
   test('non-existent order', async () => {
     expect.assertions(2);
 
-    Order.findById.mockResolvedValueOnce(null);
+    mockedOrder.findById.mockResolvedValueOnce(null);
 
     const response = await request(app)
       .get(`/orders/${mockOrder._id}`)
